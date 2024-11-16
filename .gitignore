@@ -22,6 +22,8 @@ Thumbs.db
 dist/
 /Misc_files
 my_fastapi/uploaded_images_dir
+\deploy_mlflow\mlruns\1\9e563c9bcb8d45c0a2ecc4db13566e5a\artifacts\model\data\model\variables
+
 .ipynb_checkpoints
 1.3.5
 2.13.0
