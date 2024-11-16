@@ -1,0 +1,50 @@
+name: Build and Deploy MLflow-FastAPI
+
+on:
+  push:
+    paths:
+      - "deploy_mlflow/**"  # Trigger only on changes to the deploy_mlflow directory
+      - ".github/workflows/build_deploy_mlflow.yml"  # Trigger if this workflow is updated
+  pull_request:
+    paths:
+      - "deploy_mlflow/**"
+      - ".github/workflows/build_deploy_mlflow.yml"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Set up Docker (Docker is pre-installed on GitHub runners)
+    - name: Set up Docker
+      run: docker --version  # Validate Docker is installed
+
+    # 3. Build the Docker image for mlflow-fastapi
+    - name: Build Docker image
+      run: |
+        cd deploy_mlflow
+        docker-compose build
+
+    # 4. Run the container for testing
+    - name: Run container
+      run: |
+        cd deploy_mlflow
+        docker-compose up -d
+        sleep 10  # Allow services to start
+
+    # 5. Test container functionality
+    - name: Test services
+      run: |
+        curl --fail http://localhost:8000/docs  # Test FastAPI docs endpoint
+        curl --fail http://localhost:5000  # Test MLflow UI
+
+    # 6. Tear down running containers
+    - name: Stop and remove containers
+      if: always()
+      run: |
+        cd deploy_mlflow
+        docker-compose down

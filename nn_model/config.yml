@@ -1,0 +1,172 @@
+# Package Overview
+package_name: nn_model
+
+# Data Files
+training_data_file: train_v2.csv
+training_images_folder: train-jpg
+test_data_file: test_v2.csv
+test_data_file2: train_v2.csv
+
+
+# train_path = 'C:/Reza/Pims/planets-dataset/train_v2.csv'
+# test_path = 'C:/Reza/Pims\planets-dataset/sample_submission_v2.csv'
+# train_images = 'C:/Reza/Pims/planets-dataset/train-jpg/'
+# test_images = 'C:/Reza/Pims/planets-dataset/test-jpg/'
+# test_images_additional = 'C:/Reza/Pims/planets-dataset/test-jpg-additional/'
+
+# Variables
+# The variable we are attempting to predict (sale price)
+target: tag
+
+pipeline_name: nn_model
+pipeline_save_file: nn_model_output_v
+
+# # Will cause syntax errors since they begin with numbers
+# variables_to_rename:
+#   1stFlrSF: FirstFlrSF
+#   2ndFlrSF: SecondFlrSF
+#   3SsnPorch: ThreeSsnPortch
+
+features:
+  - image_name
+  # - MSSubClass
+  # - MSZoning
+  # - LotFrontage
+  # - LotShape
+  # - LandContour
+  # - LotConfig
+  # - Neighborhood
+  # - OverallQual
+  # - OverallCond
+  # - YearRemodAdd
+  # - RoofStyle
+  # - Exterior1st
+  # - ExterQual
+  # - Foundation
+  # - BsmtQual
+  # - BsmtExposure
+  # - BsmtFinType1
+  # - HeatingQC
+  # - CentralAir
+  # - FirstFlrSF  # renamed
+  # - SecondFlrSF  # renamed
+  # - GrLivArea
+  # - BsmtFullBath
+  # - HalfBath
+  # - KitchenQual
+  # - TotRmsAbvGrd
+  # - Functional
+  # - Fireplaces
+  # - FireplaceQu
+  # - GarageFinish
+  # - GarageCars
+  # - GarageArea
+  # - PavedDrive
+  # - WoodDeckSF
+  # - ScreenPorch
+  # - SaleCondition
+  # # this one is only to calculate temporal variable:
+  # - YrSold
+
+# set train/test split
+test_size: 0.1
+
+# to set the random seed
+random_state: 0
+
+alpha: 0.001
+
+# # categorical variables with NA in train set
+# categorical_vars_with_na_frequent:
+#   - BsmtQual
+#   - BsmtExposure
+#   - BsmtFinType1
+#   - GarageFinish
+
+# categorical_vars_with_na_missing:
+#   - FireplaceQu
+
+# numerical_vars_with_na:
+#   - LotFrontage
+
+# temporal_vars:
+#   - YearRemodAdd
+
+# ref_var: YrSold
+
+
+# # variables to log transform
+# numericals_log_vars:
+#   - LotFrontage
+#   - FirstFlrSF
+#   - GrLivArea
+
+# binarize_vars:
+#   - ScreenPorch
+
+# # variables to map
+# qual_vars:
+#   - ExterQual
+#   - BsmtQual
+#   - HeatingQC
+#   - KitchenQual
+#   - FireplaceQu
+
+# exposure_vars:
+#   - BsmtExposure
+
+# finish_vars:
+#   - BsmtFinType1
+
+# garage_vars:
+#   - GarageFinish
+
+# categorical_vars:
+#   - MSSubClass
+#   - MSZoning
+#   - LotShape
+#   - LandContour
+#   - LotConfig
+#   - Neighborhood
+#   - RoofStyle
+#   - Exterior1st
+#   - Foundation
+#   - CentralAir
+#   - Functional
+#   - PavedDrive
+#   - SaleCondition
+
+# # variable mappings
+# qual_mappings:
+#   Po: 1
+#   Fa: 2
+#   TA: 3
+#   Gd: 4
+#   Ex: 5
+#   Missing: 0
+#   NA: 0
+
+# exposure_mappings:
+#   No: 1
+#   Mn: 2
+#   Av: 3
+#   Gd: 4
+
+
+# finish_mappings:
+#   Missing: 0
+#   NA: 0
+#   Unf: 1
+#   LwQ: 2
+#   Rec: 3
+#   BLQ: 4
+#   ALQ: 5
+#   GLQ: 6
+
+
+# garage_mappings:
+#   Missing: 0
+#   NA: 0
+#   Unf: 1
+#   RFn: 2
+#   Fin: 3

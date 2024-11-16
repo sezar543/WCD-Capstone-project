@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  lambda:
+    container_name: lambda-service
+    build:
+      context: ./deploy_lambda
+    ports:
+      - "8501:8501"  # Streamlit default port
+    networks:
+      - app-network
+
+  deploy_mlflow:
+    container_name: mlflow-fastapi
+    build:
+      context: ./deploy_mlflow
+      dockerfile: docker-compose.yml  # Point to the existing compose file
+    ports:
+      - "8000:8000"  # FastAPI service
+      - "5000:5000"  # MLflow service
+    networks:
+      - app-network
+      
+  fastapi_local:
+    container_name: fastapi-local-service
+    build:
+      context: ./deploy_fastapi_local
+      dockerfile: Dockerfile  # Specify the Dockerfile for local FastAPI deployment
+    ports:
+      - "8001:8000"  # Alternate host port for local FastAPI
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

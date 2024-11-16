@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  PredictFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: my-lambda-function.lambda_handler  # The function entry point
+      Runtime: python3.8                       # Ensure you have python3.8 or specify your version
+      CodeUri: .                               # Path to your Lambda code
+      MemorySize: 128                          # Memory allocated for the function
+      Timeout: 60                              # Timeout in seconds
+      Events:
+        PredictApi:
+          Type: Api
+          Properties:
+            Path: /test                        # API path for your endpoint
+            Method: post                       # HTTP method (POST)
+Outputs:
+  PredictApiUrl:
+    Description: "API Gateway endpoint URL for Predict function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/pred"

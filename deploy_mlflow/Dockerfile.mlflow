@@ -1,0 +1,33 @@
+FROM python:3.8-slim
+
+# Install SQLite
+RUN apt-get update && \
+    apt-get install -y sqlite3 && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install mlflow==2.17.1  # or your required version
+
+# Set the working directory
+WORKDIR /app
+
+COPY deploy_mlflow/mlruns/ /app/deploy_mlflow/mlruns/  
+COPY deploy_mlflow/test_sqlite.py /app/deploy_mlflow/
+
+# Copy the update script into the container
+COPY deploy_mlflow/update_mlflow_paths.sh /app/deploy_mlflow/
+RUN chmod +x /app/deploy_mlflow/update_mlflow_paths.sh
+COPY deploy_mlflow/start_mlflow.sh /app/deploy_mlflow/
+RUN chmod +x /app/deploy_mlflow/update_mlflow_paths.sh /app/deploy_mlflow/start_mlflow.sh
+
+# Ensure scripts are executable
+RUN chmod +x /app/deploy_mlflow/update_mlflow_paths.sh
+RUN chown -R 1000:1000 /app/deploy_mlflow/mlruns
+
+EXPOSE 5000
+
+# Set the ENTRYPOINT to the start script
+ENTRYPOINT ["/app/deploy_mlflow/start_mlflow.sh"]
+
+# ENTRYPOINT ["mlflow", "server", "--backend-store-uri", "sqlite:////app/deploy_mlflow/mlruns/mlflow.db", "--default-artifact-root", "file:///app/deploy_mlflow/mlruns/artifacts", "--host", "0.0.0.0", "--port", "5000"]
+# ENTRYPOINT ["/bin/sh", "-c", "/app/deploy_mlflow/update_mlflow_paths.sh && mlflow server --backend-store-uri sqlite:///app/deploy_mlflow/mlruns/mlflow.db --default-artifact-root file:///app/deploy_mlflow/mlruns/artifacts --host 0.0.0.0 --port 5000"]
+# ENTRYPOINT ["/bin/sh", "-c", "ls -l /app/deploy_mlflow/mlruns && /app/deploy_mlflow/update_mlflow_paths.sh && mlflow server --backend-store-uri sqlite:///app/deploy_mlflow/mlruns/mlflow.db --default-artifact-root file:///app/deploy_mlflow/mlruns/artifacts --host 0.0.0.0 --port 5000"]

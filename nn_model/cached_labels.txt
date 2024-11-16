@@ -1,0 +1,17 @@
+selective_logging
+blow_down
+haze
+habitation
+water
+cloudy
+conventional_mine
+bare_ground
+artisinal_mine
+primary
+partly_cloudy
+clear
+road
+cultivation
+slash_burn
+blooming
+agriculture
