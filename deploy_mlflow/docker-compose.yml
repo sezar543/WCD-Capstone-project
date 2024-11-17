@@ -3,7 +3,7 @@ services:
     container_name: fastapi
     build:
       context: ../  # Set the context to the project root directory
-      dockerfile: deploy_mlflow/dockerfile.fastapi  # Specify the path to Dockerfile within the context
+      dockerfile: deploy_mlflow/Dockerfile.fastapi  # Specify the path to Dockerfile within the context
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
     ports:
@@ -17,7 +17,7 @@ services:
     container_name: mlflow
     build:
       context: ../
-      dockerfile: deploy_mlflow/dockerfile.mlflow  # Specify the Dockerfile for MLflow
+      dockerfile: deploy_mlflow/Dockerfile.mlflow  # Specify the Dockerfile for MLflow
     ports:
       - "5000:5000"
     environment:
