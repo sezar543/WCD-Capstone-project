@@ -1,0 +1,40 @@
+# Use an official Python runtime as a parent image
+FROM python:3.8-slim
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    libgl1 \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    netcat-openbsd \
+    sqlite3 && \
+    rm -rf /var/lib/apt/lists/*
+# Set the working directory
+WORKDIR /app
+
+# Copy requirements.txt and install dependencies
+COPY deploy_mlflow/requirements.txt /app/  
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy the entire FastAPI app folder
+COPY deploy_mlflow/my_fastapi /app/deploy_mlflow/my_fastapi  
+COPY deploy_mlflow/mlruns/ /app/deploy_mlflow/mlruns/  
+
+# Copy nn_model and other necessary files
+COPY nn_model /app/nn_model 
+COPY deploy_mlflow/utils.py /app/deploy_mlflow/
+COPY deploy_mlflow/test_sqlite.py /app/deploy_mlflow/
+
+# Set the correct permissions for the mlruns directory
+RUN chmod -R 777 /app/deploy_mlflow/mlruns/
+
+# Copy the update script into the container
+COPY deploy_mlflow/update_mlflow_paths.sh /app/deploy_mlflow/
+RUN chmod +x /app/deploy_mlflow/update_mlflow_paths.sh
+
+# Run the SQLite check
+RUN python /app/deploy_mlflow/test_sqlite.py
+
+# Run the FastAPI app
+CMD ["uvicorn", "deploy_mlflow.my_fastapi.fastapi_app:app", "--host", "0.0.0.0", "--port", "8000"]
