@@ -23,28 +23,35 @@ jobs:
     - name: Set up Docker
       run: docker --version  # Validate Docker is installed
 
-    # 3. Build the Docker image for mlflow-fastapi
+    # 3. Install docker-compose
+    - name: Install docker-compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose-plugin
+        docker compose version  # Validate docker-compose is installed
+
+    # 4. Build the Docker image for mlflow-fastapi
     - name: Build Docker image
       run: |
         cd deploy_mlflow
-        docker-compose build
+        docker compose build  # Use `docker compose` instead of `docker-compose`
 
-    # 4. Run the container for testing
+    # 5. Run the container for testing
     - name: Run container
       run: |
         cd deploy_mlflow
-        docker-compose up -d
+        docker compose up -d
         sleep 10  # Allow services to start
 
-    # 5. Test container functionality
+    # 6. Test container functionality
     - name: Test services
       run: |
         curl --fail http://localhost:8000/docs  # Test FastAPI docs endpoint
         curl --fail http://localhost:5000  # Test MLflow UI
 
-    # 6. Tear down running containers
+    # 7. Tear down running containers
     - name: Stop and remove containers
       if: always()
       run: |
         cd deploy_mlflow
-        docker-compose down
+        docker compose down
