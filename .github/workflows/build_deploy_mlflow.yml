@@ -23,12 +23,12 @@ jobs:
     - name: Set up Docker
       run: docker --version  # Validate Docker is installed
 
-    # 3. Install docker-compose
+    # 3. Install docker-compose manually
     - name: Install docker-compose
       run: |
-        sudo apt-get update
-        sudo apt-get install -y docker-compose-plugin
-        docker compose version  # Validate docker-compose is installed
+        sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version  # Validate docker-compose is installed
 
     # 4. Build the Docker image for mlflow-fastapi
     - name: Build Docker image
