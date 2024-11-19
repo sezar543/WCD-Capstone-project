@@ -24,9 +24,9 @@ import sys
 from .evaluation_metrics import fbeta, accuracy_score
 from deploy_mlflow.utils import get_mlflow_db_path
 
-# os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'deploy-mlflow')))
-# Change the working directory to deploy-mlflow
-deploy_mlflow_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'deploy-mlflow'))
+# os.chdir(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'deploy_mlflow')))
+# Change the working directory to deploy_mlflow
+deploy_mlflow_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'deploy_mlflow'))
 print("Changing working directory to:", deploy_mlflow_path)
 os.chdir(deploy_mlflow_path)
 
