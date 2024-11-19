@@ -41,12 +41,18 @@ jobs:
       run: |
         cd deploy_mlflow
         docker compose up -d
-        sleep 20  # Allow services to start
+        sleep 35  # Allow services to start
+
+    - name: Check container status
+      run: |
+        cd deploy_mlflow
+        docker compose ps
+        docker compose logs
 
     # 6. Test services using service names
     - name: Test FastAPI service
       run: |
-        curl --fail http://fastapi:8000/docs  # Test FastAPI docs endpoint
+        curl --fail http://localhost:8000/docs  # Test FastAPI docs endpoint
 
     - name: Test MLflow UI
       run: |
