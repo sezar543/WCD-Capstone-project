@@ -50,13 +50,13 @@ jobs:
         docker compose logs
 
     # 6. Test services using service names
-    - name: Test MLflow UI
-      run: |
-        curl --fail http://mlflow:5000  # Test MLflow UI
-        
     - name: Test FastAPI service
       run: |
         curl --fail http://localhost:8000/docs  # Test FastAPI docs endpoint
+
+    - name: Test MLflow UI
+      run: |
+        curl --fail http://localhost:5000  # Test MLflow UI
       
     # 7. Tear down running containers
     - name: Stop and remove containers
