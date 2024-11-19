@@ -43,10 +43,13 @@ jobs:
         docker compose up -d
         sleep 10  # Allow services to start
 
-    # 6. Test container functionality
-    - name: Test services
+    # 6. Test services
+    - name: Test FastAPI service
       run: |
         curl --fail http://localhost:8000/docs  # Test FastAPI docs endpoint
+
+    - name: Test MLflow UI
+      run: |
         curl --fail http://localhost:5000  # Test MLflow UI
 
     # 7. Tear down running containers
