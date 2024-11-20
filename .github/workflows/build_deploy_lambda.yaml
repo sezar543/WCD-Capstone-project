@@ -1,9 +1,13 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      push_to_ecr:
+        description: 'Push the Docker image to AWS ECR'
+        required: true
+        default: 'false'
+        type: string
 
 jobs:
   build-and-deploy:
@@ -45,18 +49,23 @@ jobs:
 
     # Step 6: Build and tag Docker image
     - name: Build and tag Docker image
-      if: github.event.inputs.push_to_ecr == 'true' # Add this condition
       run: |
         docker build -t image-classification-app -f ./deploy_lambda/docker.lambda .
         docker tag image-classification-app:latest localhost:5000/image-classification-app:latest
 
     # Step 7: Push the image to Amazon ECR
-    - name: Push Docker image to Amazon ECR
+    - name: Push Docker image to Amazon ECR or Local Registry
       run: |
-        docker push localhost:5000/image-classification-app:latest
+        if [ "${{ github.event.inputs.push_to_ecr }}" == "true" ]; then
+          docker tag image-classification-app:latest $ECR_REGISTRY/image-classification-app:latest
+          docker push $ECR_REGISTRY/image-classification-app:latest
+        else
+          docker push localhost:5000/image-classification-app:latest
+        fi
 
     # Step 8: Update the Lambda function
     - name: Update Lambda function
+      if: github.event.inputs.push_to_ecr == 'true'
       run: |
         aws lambda update-function-code \
           --function-name image-classification-model \
