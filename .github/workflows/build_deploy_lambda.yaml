@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Build and Deploy lambda
 
 on:
   workflow_dispatch:
@@ -50,7 +50,7 @@ jobs:
     # Step 6: Build and tag Docker image
     - name: Build and tag Docker image
       run: |
-        docker build -t image-classification-app -f ./deploy_lambda/docker.lambda .
+        docker build -t image-classification-app -f ./deploy_lambda/dockerfile.lambda .
         docker tag image-classification-app:latest localhost:5000/image-classification-app:latest
 
     # Step 7: Push the image to Amazon ECR
