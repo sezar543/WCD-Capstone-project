@@ -1,0 +1,28 @@
+# Use the Python 3.8 base image
+FROM python:3.8-slim
+
+# Install OpenCV dependencies
+RUN apt-get update && apt-get install -y \
+    libxinerama1 \
+    libglib2.0-0 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+    
+# Set the working directory to /var/task
+WORKDIR /var/task
+
+# Copy requirements first to leverage Docker cache
+COPY requirements/requirements.txt /var/task/
+
+# Install required dependencies and Python dependencies
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt --target "/var/task" \
+    && pip install --no-cache-dir awslambdaric
+
+# Copy the Lambda function code to the LAMBDA_TASK_ROOT
+COPY deploy_lambda/my-lambda-function.py /var/task
+COPY nn_model /var/task/nn_model/
+# COPY . .
+
+# Set the Lambda handler function
+CMD ["python3", "-m", "awslambdaric", "my-lambda-function.lambda_handler"]
