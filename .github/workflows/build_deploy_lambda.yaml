@@ -64,13 +64,13 @@ jobs:
         echo "Dummy Image input: ${{ github.event.inputs.dummy_image }}"
         if [ "${{ github.event.inputs.dummy_image }}" == "true" ]; then
           echo "Building Dummy Image..."
-          echo -e "FROM alpine:latest\nCMD [\"echo\", \"Dummy image for testing\"]" > Dummy.Dockerfile
-          docker build -t image-classification-dummy:latest -f Dummy.Dockerfile .
+          echo -e "FROM alpine:latest\nCMD [\"echo\", \"Dummy image for testing\"]" > Dockerfile.Dummy
+          docker build -t image-classification-dummy:latest -f Dockerfile.Dummy .
           docker tag image-classification-dummy:latest $ECR_REGISTRY/dummy-image:latest
         else
           echo "Building Application Image..."
           ls -l ./deploy_lambda/  # Debugging to check file existence
-          docker build -t image-classification-app:latest -f ./deploy_lambda/dockerfile.lambda .
+          docker build -t image-classification-app:latest -f ./deploy_lambda/Dockerfile.Lambda .
           docker tag image-classification-app:latest $ECR_REGISTRY/image-classification-app:latest
         fi
 
