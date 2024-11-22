@@ -1,4 +1,4 @@
-name: Build and Deploy lambda
+name: Build and Deploy Lambda
 
 on:
   workflow_dispatch:
@@ -39,12 +39,12 @@ jobs:
       run: |
         docker --version
 
-    # Step 3: Start a Local Docker Registry
+    # Step 4: Start a Local Docker Registry
     - name: Start Local Docker Registry
       run: |
         docker run -d -p 5000:5000 --name local-registry registry:2
 
-    # Step 4: Configure AWS Credentials
+    # Step 5: Configure AWS Credentials
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -52,14 +52,16 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    # Step 5: Log in to Amazon ECR
+    # Step 6: Log in to Amazon ECR
     - name: Log in to Amazon ECR
       run: |
         aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
 
-    # Step 6: Build the Docker image (Dummy or Application)
+    # Step 7: Build the Docker image (Dummy or Application)
     - name: Build Docker Image
       run: |
+        set -x  # Enable verbose logging for debugging
+        echo "Dummy Image input: ${{ github.event.inputs.dummy_image }}"
         if [ "${{ github.event.inputs.dummy_image }}" == "true" ]; then
           echo "Building Dummy Image..."
           echo -e "FROM alpine:latest\nCMD [\"echo\", \"Dummy image for testing\"]" > Dummy.Dockerfile
@@ -67,19 +69,21 @@ jobs:
           docker tag image-classification-dummy:latest $ECR_REGISTRY/dummy-image:latest
         else
           echo "Building Application Image..."
+          ls -l ./deploy_lambda/  # Debugging to check file existence
           docker build -t image-classification-app:latest -f ./deploy_lambda/dockerfile.lambda .
           docker tag image-classification-app:latest $ECR_REGISTRY/image-classification-app:latest
         fi
 
-    # Step 7: Push the image to Amazon ECR
+    # Step 8: Push the image to Amazon ECR
     - name: Push Docker Image to Amazon ECR
       run: |
         if [ "${{ github.event.inputs.dummy_image }}" == "true" ]; then
           docker push $ECR_REGISTRY/dummy-image:latest
         else
           docker push $ECR_REGISTRY/image-classification-app:latest
+        fi
 
-    # Step 8: Update the Lambda function
+    # Step 9: Update the Lambda function
     - name: Update Lambda Function
       if: github.event.inputs.push_to_ecr == 'true'
       run: |
