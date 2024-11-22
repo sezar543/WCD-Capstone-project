@@ -60,8 +60,6 @@ jobs:
     # Step 7: Build the Docker image (Dummy or Application)
     - name: Build Docker Image
       run: |
-        set -x  # Enable verbose logging for debugging
-        echo "Dummy Image input: ${{ github.event.inputs.dummy_image }}"
         if [ "${{ github.event.inputs.dummy_image }}" == "true" ]; then
           echo "Building Dummy Image..."
           echo -e "FROM alpine:latest\nCMD [\"echo\", \"Dummy image for testing\"]" > Dockerfile.Dummy
@@ -69,12 +67,22 @@ jobs:
           docker tag image-classification-dummy:latest $ECR_REGISTRY/dummy-image:latest
         else
           echo "Building Application Image..."
-          ls -l ./deploy_lambda/  # Debugging to check file existence
           docker build -t image-classification-app:latest -f ./deploy_lambda/Dockerfile.Lambda .
           docker tag image-classification-app:latest $ECR_REGISTRY/image-classification-app:latest
         fi
 
-    # Step 8: Push the image to Amazon ECR
+    # Step 8: Ensure the ECR Repository Exists
+    - name: Ensure ECR Repository Exists
+      run: |
+        REPO_NAME=$([[ "${{ github.event.inputs.dummy_image }}" == "true" ]] && echo "dummy-image" || echo "image-classification-app")
+        if ! aws ecr describe-repositories --repository-names "$REPO_NAME" --region $AWS_REGION > /dev/null 2>&1; then
+          echo "Repository $REPO_NAME does not exist. Creating it..."
+          aws ecr create-repository --repository-name "$REPO_NAME" --region $AWS_REGION
+        else
+          echo "Repository $REPO_NAME already exists."
+        fi
+
+    # Step 9: Push the Docker Image to Amazon ECR
     - name: Push Docker Image to Amazon ECR
       run: |
         if [ "${{ github.event.inputs.dummy_image }}" == "true" ]; then
@@ -83,7 +91,7 @@ jobs:
           docker push $ECR_REGISTRY/image-classification-app:latest
         fi
 
-    # Step 9: Update the Lambda function
+    # Step 10: Update the Lambda function
     - name: Update Lambda Function
       if: github.event.inputs.push_to_ecr == 'true'
       run: |
