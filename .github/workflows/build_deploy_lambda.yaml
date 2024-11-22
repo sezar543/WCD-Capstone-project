@@ -105,3 +105,4 @@ jobs:
             --function-name image-classification-model \
             --image-uri $ECR_REGISTRY/image-classification-app:latest \
             --region $AWS_REGION
+        fi
