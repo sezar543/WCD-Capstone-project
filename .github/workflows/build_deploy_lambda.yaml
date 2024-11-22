@@ -62,13 +62,14 @@ jobs:
       run: |
         if [ "${{ github.event.inputs.dummy_image }}" == "true" ]; then
           echo "Building Dummy Image..."
-          echo -e "FROM alpine:latest\nCMD [\"echo\", \"Dummy image for testing\"]" > Dockerfile.Dummy
-          docker build -t image-classification-dummy:latest -f Dockerfile.Dummy .
+          echo -e "FROM alpine:latest\nCMD [\"echo\", \"Dummy image for testing\"]" > Dummy.Dockerfile
+          docker build -t image-classification-dummy:latest -f Dummy.Dockerfile .
           docker tag image-classification-dummy:latest $ECR_REGISTRY/dummy-image:latest
         else
           echo "Building Application Image..."
-          docker build -t image-classification-app:latest -f ./deploy_lambda/Dockerfile.Lambda .
+          docker build -t image-classification-app:latest -f ./deploy_lambda/dockerfile.lambda .
           docker tag image-classification-app:latest $ECR_REGISTRY/image-classification-app:latest
+        fi
 
     # Step 7: Push the image to Amazon ECR
     - name: Push Docker Image to Amazon ECR
