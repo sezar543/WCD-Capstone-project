@@ -20,6 +20,7 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir awslambdaric
 
 # Copy the Lambda function code to the LAMBDA_TASK_ROOT
+COPY deploy_mlflow/utils.py /var/task/deploy_mlflow/
 COPY deploy_lambda/my-lambda-function.py /var/task
 COPY nn_model /var/task/nn_model/
 # COPY . .
