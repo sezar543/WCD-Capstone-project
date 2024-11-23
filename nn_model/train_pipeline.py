@@ -8,7 +8,6 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 import numpy as np
 # import os
 import matplotlib.pyplot as plt
-import mlflow
 
 # Add the project root directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -24,7 +23,6 @@ from nn_model.processing.data_manager import pre_pipeline_preparation
 from nn_model.processing.nn_architecture import nn_architecture
 from nn_model.labels_utile import get_labels
 from nn_model.config.core import PREDICTIONS_DIR
-from deploy_mlflow.utils import get_mlflow_db_path
 
 import gc
 
@@ -62,22 +60,6 @@ tf.random.set_seed(random_seed)
 
 # path2 = "\deploying-machine-learning-models\section-05-production-model-package\nn_model\datasets"
 # path2 = r"\nn_model\datasets"
-
-# Set MLflow tracking URI
-# mlflow_db_path = get_mlflow_db_path()
-# mlflow.set_tracking_uri(f"sqlite:///{mlflow_db_path}")
-
-# print("MLflow tracking URI set to:", mlflow_db_path)
-
-# # Get the current directory of train_pipeline.py
-# current_dir = os.path.dirname(os.path.abspath(__file__))
-# # Construct the relative path to mlflow.db
-# relative_path = os.path.join(current_dir, '..', 'deploy_mlflow', 'mlruns', 'mlflow.db')
-# print("relative_path insde train_pipeline = ", relative_path)
-# # Set MLflow tracking URI with the relative path to the SQLite database
-# mlflow.set_tracking_uri(f"sqlite:///{os.path.normpath(relative_path)}")
-
-# mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000"))
 
 
 def load_and_preprocess_data():

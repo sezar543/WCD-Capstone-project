@@ -18,7 +18,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      MLFLOW_TRACKING_URI: sqlite:///app/deploy_mlflow/mlruns/mlflow.db
       AWS_REGION: ${{ secrets.AWS_REGION }}
       ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
 
